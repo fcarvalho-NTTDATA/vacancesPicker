@@ -6,6 +6,11 @@ import { requireSession } from "@/lib/session";
 import { prisma } from "@/lib/prisma";
 import { countBusinessDays, toDateOnlyUTC } from "@/lib/vacation";
 
+export type VacationFormState = {
+  ok: boolean;
+  message?: string;
+};
+
 const entrySchema = z
   .object({
     startDate: z.string().min(1, "Indica a data de início"),
@@ -17,9 +22,9 @@ const entrySchema = z
   });
 
 export async function createVacationEntry(
-  _prevState: string | undefined,
+  _prevState: VacationFormState | undefined,
   formData: FormData
-) {
+): Promise<VacationFormState> {
   const session = await requireSession();
 
   const parsed = entrySchema.safeParse({
@@ -28,7 +33,7 @@ export async function createVacationEntry(
   });
 
   if (!parsed.success) {
-    return parsed.error.issues[0]?.message ?? "Dados inválidos";
+    return { ok: false, message: parsed.error.issues[0]?.message ?? "Dados inválidos" };
   }
 
   const startDate = toDateOnlyUTC(parsed.data.startDate);
@@ -36,7 +41,19 @@ export async function createVacationEntry(
   const daysCount = countBusinessDays(startDate, endDate);
 
   if (daysCount === 0) {
-    return "O período selecionado não inclui dias úteis";
+    return { ok: false, message: "O período selecionado não inclui dias úteis" };
+  }
+
+  const overlapping = await prisma.vacationEntry.findFirst({
+    where: {
+      userId: session.user.id,
+      startDate: { lte: endDate },
+      endDate: { gte: startDate },
+    },
+  });
+
+  if (overlapping) {
+    return { ok: false, message: "Este período sobrepõe-se a férias já registadas" };
   }
 
   await prisma.vacationEntry.create({
@@ -49,6 +66,7 @@ export async function createVacationEntry(
   });
 
   revalidatePath("/ferias");
+  return { ok: true };
 }
 
 export async function deleteVacationEntry(formData: FormData) {

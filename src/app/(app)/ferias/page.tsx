@@ -3,10 +3,11 @@ import { requireSession } from "@/lib/session";
 import { prisma } from "@/lib/prisma";
 import { Card, CardBody, CardHeader, CardTitle } from "@/components/ui/Card";
 import { Badge } from "@/components/ui/Badge";
+import { ConfirmSubmitButton } from "@/components/ui/ConfirmSubmitButton";
 import { VacationForm } from "@/components/VacationForm";
 import { VacationCalendar } from "@/components/VacationCalendar";
 import { deleteVacationEntry } from "./actions";
-import { formatDateISO } from "@/lib/vacation";
+import { formatDateDisplay, formatDateISO } from "@/lib/vacation";
 
 export default async function FeriasPage({
   searchParams,
@@ -63,40 +64,48 @@ export default async function FeriasPage({
         </div>
       </div>
 
-      <div className="grid gap-6 sm:grid-cols-3">
-        <Card>
-          <CardBody>
-            <p className="text-xs uppercase tracking-wide text-gray-400">
-              Dias anuais
-            </p>
-            <p className="mt-1 text-2xl font-bold text-navy">
-              {user.annualVacationDays}
-            </p>
-          </CardBody>
-        </Card>
-        <Card>
-          <CardBody>
-            <p className="text-xs uppercase tracking-wide text-gray-400">
-              Dias usados
-            </p>
-            <p className="mt-1 text-2xl font-bold text-navy">{usedDays}</p>
-          </CardBody>
-        </Card>
-        <Card>
-          <CardBody>
-            <p className="text-xs uppercase tracking-wide text-gray-400">
-              Dias restantes
-            </p>
-            <p
-              className={`mt-1 text-2xl font-bold ${
-                remaining < 0 ? "text-ntt-red" : "text-navy"
+      <Card>
+        <CardBody>
+          <div className="grid gap-6 sm:grid-cols-3">
+            <div>
+              <p className="text-xs uppercase tracking-wide text-gray-400">
+                Dias anuais
+              </p>
+              <p className="mt-1 text-2xl font-bold text-navy">
+                {user.annualVacationDays}
+              </p>
+            </div>
+            <div>
+              <p className="text-xs uppercase tracking-wide text-gray-400">
+                Dias usados
+              </p>
+              <p className="mt-1 text-2xl font-bold text-navy">{usedDays}</p>
+            </div>
+            <div>
+              <p className="text-xs uppercase tracking-wide text-gray-400">
+                Dias restantes
+              </p>
+              <p
+                className={`mt-1 text-2xl font-bold ${
+                  remaining < 0 ? "text-ntt-red" : "text-navy"
+                }`}
+              >
+                {remaining}
+              </p>
+            </div>
+          </div>
+          <div className="mt-4 h-2 overflow-hidden rounded-full bg-navy-50">
+            <div
+              className={`h-full rounded-full ${
+                remaining < 0 ? "bg-ntt-red" : "bg-navy"
               }`}
-            >
-              {remaining}
-            </p>
-          </CardBody>
-        </Card>
-      </div>
+              style={{
+                width: `${Math.min(100, (usedDays / Math.max(user.annualVacationDays, 1)) * 100)}%`,
+              }}
+            />
+          </div>
+        </CardBody>
+      </Card>
 
       {user.projects.length > 0 && (
         <div className="flex flex-wrap items-center gap-2">
@@ -114,7 +123,13 @@ export default async function FeriasPage({
           <CardTitle>Adicionar período de férias</CardTitle>
         </CardHeader>
         <CardBody>
-          <VacationForm />
+          <VacationForm
+            existingRanges={entries.map((e) => ({
+              startDate: formatDateISO(e.startDate),
+              endDate: formatDateISO(e.endDate),
+            }))}
+            remainingDays={remaining}
+          />
         </CardBody>
       </Card>
 
@@ -136,7 +151,7 @@ export default async function FeriasPage({
                 >
                   <div>
                     <p className="text-sm font-medium text-navy">
-                      {formatDateISO(entry.startDate)} — {formatDateISO(entry.endDate)}
+                      {formatDateDisplay(entry.startDate)} — {formatDateDisplay(entry.endDate)}
                     </p>
                     <p className="text-xs text-gray-500">
                       {entry.daysCount === 1
@@ -146,12 +161,13 @@ export default async function FeriasPage({
                   </div>
                   <form action={deleteVacationEntry}>
                     <input type="hidden" name="id" value={entry.id} />
-                    <button
-                      type="submit"
-                      className="text-sm font-medium text-ntt-red hover:text-ntt-red-dark"
+                    <ConfirmSubmitButton
+                      variant="danger"
+                      className="px-2 py-1 text-xs"
+                      confirmMessage={`Remover o período de ${formatDateDisplay(entry.startDate)} a ${formatDateDisplay(entry.endDate)}?`}
                     >
                       Remover
-                    </button>
+                    </ConfirmSubmitButton>
                   </form>
                 </li>
               ))}

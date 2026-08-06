@@ -27,6 +27,24 @@ export function formatDateISO(date: Date): string {
   return date.toISOString().slice(0, 10);
 }
 
+export function formatDateDisplay(date: Date): string {
+  return date.toLocaleDateString("pt-PT", {
+    day: "2-digit",
+    month: "short",
+    year: "numeric",
+    timeZone: "UTC",
+  });
+}
+
+export function rangesOverlap(
+  aStart: Date,
+  aEnd: Date,
+  bStart: Date,
+  bEnd: Date
+): boolean {
+  return aStart.getTime() <= bEnd.getTime() && bStart.getTime() <= aEnd.getTime();
+}
+
 export const MONTH_NAMES_PT = [
   "Janeiro",
   "Fevereiro",
