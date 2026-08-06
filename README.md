@@ -16,7 +16,7 @@ Stack: **Next.js 16 (App Router) + TypeScript + Tailwind CSS + Prisma + NeonDB (
 ## 1. Criar a base de dados na Neon
 
 1. Cria uma conta em [neon.tech](https://neon.tech) e um novo projeto (ex: `ferias`)
-2. No dashboard, vai a **Connection Details** e copia a connection string "pooled" (formato `postgresql://user:password@ep-xxxx-pooler.<region>.aws.neon.tech/neondb?sslmode=require`)
+2. No dashboard, vai a **Connection Details** e copia as duas connection strings: a "pooled" (`DATABASE_URL`, usada em runtime pela app) e a sem pgbouncer (`DATABASE_URL_UNPOOLED`, usada só pelas migrations — a Neon disponibiliza as duas nessa mesma página)
 
 ## 2. Configurar variáveis de ambiente
 
@@ -26,9 +26,12 @@ Copia `.env.example` para `.env` e preenche:
 cp .env.example .env
 ```
 
-- `DATABASE_URL` — a connection string da Neon
+- `DATABASE_URL` — connection string "pooled" da Neon
+- `DATABASE_URL_UNPOOLED` — connection string sem pgbouncer da Neon (usada pelo `prisma migrate`)
 - `AUTH_SECRET` — gera com `npx auth secret` (ou `openssl rand -base64 33`)
 - `SEED_ADMIN_NAME` / `SEED_ADMIN_EMAIL` / `SEED_ADMIN_PASSWORD` — usados só uma vez pelo script de seed para criar a primeira conta de administrador
+
+> Não crias um `.env.local` — o Next.js dá-lhe prioridade sobre o `.env` e, se ficar lá um valor antigo, a app volta a ligar-se a ele silenciosamente em vez da tua Neon.
 
 ## 3. Instalar dependências e criar as tabelas
 
@@ -73,3 +76,14 @@ Abre [http://localhost:3000](http://localhost:3000) e entra com o email/password
 - Sem fluxo de aprovação: as férias inseridas ficam imediatamente visíveis ao admin
 - Os dias de férias contam apenas dias úteis (exclui sábados e domingos)
 - Não existe ecrã de "alterar a minha password" na v1 — a gestão de passwords é feita pelo admin em **Utilizadores**
+
+## Resolução de problemas
+
+- **`unable to get local issuer certificate` ao correr `npm run dev` / `db:seed`** — acontece em redes corporativas com inspeção SSL, onde o Windows confia no certificado mas o Node (que usa o seu próprio conjunto de CAs) não. Corre com a flag experimental do Node que usa a confiança do sistema operativo:
+
+  ```bash
+  NODE_OPTIONS="--use-system-ca" npm run dev
+  NODE_OPTIONS="--use-system-ca" npm run db:seed
+  ```
+
+  (Requer Node 22+. No Vercel isto normalmente não é necessário.)
