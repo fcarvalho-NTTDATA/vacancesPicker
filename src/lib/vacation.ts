@@ -36,6 +36,18 @@ export function formatDateDisplay(date: Date): string {
   });
 }
 
+export function businessDaysWithinBounds(
+  rangeStart: Date,
+  rangeEnd: Date,
+  boundStart: Date,
+  boundEnd: Date
+): number {
+  const clippedStart = rangeStart > boundStart ? rangeStart : boundStart;
+  const clippedEnd = rangeEnd < boundEnd ? rangeEnd : boundEnd;
+  if (clippedStart > clippedEnd) return 0;
+  return countBusinessDays(clippedStart, clippedEnd);
+}
+
 export const HOURS_PER_DAY = 8;
 
 export function daysToHours(days: number): number {

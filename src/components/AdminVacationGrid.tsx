@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { Badge } from "@/components/ui/Badge";
+import { businessDaysWithinBounds, daysToHours } from "@/lib/vacation";
 
 type Person = {
   id: string;
@@ -26,6 +27,8 @@ export function AdminVacationGrid({
 }) {
   const daysInMonth = new Date(Date.UTC(year, month + 1, 0)).getUTCDate();
   const days = Array.from({ length: daysInMonth }, (_, i) => i + 1);
+  const monthStart = new Date(Date.UTC(year, month, 1));
+  const monthEnd = new Date(Date.UTC(year, month, daysInMonth));
 
   if (people.length === 0) {
     return (
@@ -61,12 +64,21 @@ export function AdminVacationGrid({
           </tr>
         </thead>
         <tbody>
-          {people.map((person) => (
+          {people.map((person) => {
+            const hoursOffThisMonth = daysToHours(
+              person.ranges.reduce(
+                (sum, r) =>
+                  sum + businessDaysWithinBounds(r.startDate, r.endDate, monthStart, monthEnd),
+                0
+              )
+            );
+
+            return (
             <tr key={person.id} className="border-t border-gray-100">
               <td className="sticky left-0 z-10 bg-white py-2 pr-3">
                 <Link
                   href={`/admin/utilizadores/${person.id}/editar`}
-                  className="font-medium text-navy hover:text-ntt-red"
+                  className="font-medium text-navy hover:text-blue"
                 >
                   {person.name}
                 </Link>
@@ -77,6 +89,9 @@ export function AdminVacationGrid({
                     </Badge>
                   ))}
                 </div>
+                <p className="mt-1 text-xs text-gray-500">
+                  {hoursOffThisMonth > 0 ? `${hoursOffThisMonth}h fora este mês` : "Sem férias este mês"}
+                </p>
               </td>
               {days.map((day) => {
                 const date = new Date(Date.UTC(year, month, day));
@@ -88,7 +103,7 @@ export function AdminVacationGrid({
                     <div
                       className={`mx-auto h-6 w-6 rounded ${
                         onVacation
-                          ? "bg-ntt-red"
+                          ? "bg-blue"
                           : isWeekend
                           ? "bg-gray-100"
                           : ""
@@ -99,7 +114,8 @@ export function AdminVacationGrid({
                 );
               })}
             </tr>
-          ))}
+            );
+          })}
         </tbody>
       </table>
     </div>
