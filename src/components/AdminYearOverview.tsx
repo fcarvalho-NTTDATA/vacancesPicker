@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { Badge } from "@/components/ui/Badge";
-import { formatDateDisplay } from "@/lib/vacation";
+import { daysToHours, formatDateDisplay } from "@/lib/vacation";
 
 type Person = {
   id: string;
@@ -74,7 +74,7 @@ export function AdminYearOverview({ people }: { people: Person[] }) {
                     : person.entries
                         .map(
                           (e) =>
-                            `${formatDateDisplay(e.startDate)} – ${formatDateDisplay(e.endDate)}`
+                            `${formatDateDisplay(e.startDate)} – ${formatDateDisplay(e.endDate)} (${daysToHours(e.daysCount)}h)`
                         )
                         .join(" · ")}
                 </td>

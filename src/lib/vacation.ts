@@ -36,6 +36,12 @@ export function formatDateDisplay(date: Date): string {
   });
 }
 
+export const HOURS_PER_DAY = 8;
+
+export function daysToHours(days: number): number {
+  return days * HOURS_PER_DAY;
+}
+
 export function rangesOverlap(
   aStart: Date,
   aEnd: Date,
