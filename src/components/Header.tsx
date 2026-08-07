@@ -21,8 +21,8 @@ export function Header({ name, role }: Props) {
       <div className="mx-auto flex max-w-6xl items-center justify-between px-6 py-4">
         <div className="flex items-center gap-8">
           <Link href="/" className="flex items-center gap-2 text-lg font-bold tracking-tight">
-            <span className="inline-block h-2.5 w-2.5 rounded-full bg-ntt-red" />
-            Férias<span className="text-ntt-red">.</span>
+            <span className="inline-block h-2.5 w-2.5 rounded-full bg-blue" />
+            Férias<span className="text-blue">.</span>
           </Link>
           <nav className="hidden gap-6 md:flex">
             {navLinks.map((link) => (

@@ -34,7 +34,7 @@ export function ProjectForm({
             id="color"
             name="color"
             type="color"
-            defaultValue={initial?.color ?? "#E4002B"}
+            defaultValue={initial?.color ?? "#0072BC"}
             className="h-10 w-full rounded-md border border-gray-300"
           />
         </FormField>

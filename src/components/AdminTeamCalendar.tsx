@@ -51,7 +51,7 @@ function MonthGrid({
               <span
                 className={`flex h-6 w-6 items-center justify-center rounded-full text-[11px] ${
                   onLeave.length > 0
-                    ? "bg-ntt-red-light font-semibold text-ntt-red-dark"
+                    ? "bg-blue-light font-semibold text-blue-dark"
                     : isWeekend
                     ? "text-gray-300"
                     : "text-navy"
@@ -61,7 +61,7 @@ function MonthGrid({
               </span>
               {onLeave.length > 0 && (
                 <>
-                  <span className="absolute bottom-0.5 h-1.5 w-1.5 rounded-full bg-ntt-red" />
+                  <span className="absolute bottom-0.5 h-1.5 w-1.5 rounded-full bg-blue" />
                   <div className="pointer-events-none absolute bottom-full left-1/2 z-20 mb-1.5 hidden w-max max-w-[200px] -translate-x-1/2 rounded-md bg-navy px-2.5 py-1.5 text-xs text-white shadow-lg group-hover:block">
                     <p className="font-semibold">
                       {onLeave.length === 1 ? "1 pessoa de férias" : `${onLeave.length} pessoas de férias`}

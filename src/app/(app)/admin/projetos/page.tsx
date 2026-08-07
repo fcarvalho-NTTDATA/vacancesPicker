@@ -60,7 +60,7 @@ export default async function ProjetosPage() {
                       <div className="flex justify-end gap-3">
                         <Link
                           href={`/admin/projetos/${project.id}/editar`}
-                          className="text-sm font-medium text-navy hover:text-ntt-red"
+                          className="text-sm font-medium text-navy hover:text-blue"
                         >
                           Editar
                         </Link>

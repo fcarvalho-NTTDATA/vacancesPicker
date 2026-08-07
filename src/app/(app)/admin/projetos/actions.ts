@@ -11,7 +11,7 @@ const schema = z.object({
   color: z
     .string()
     .regex(/^#[0-9a-fA-F]{6}$/, "Cor inválida")
-    .default("#E4002B"),
+    .default("#0072BC"),
 });
 
 export async function createProject(

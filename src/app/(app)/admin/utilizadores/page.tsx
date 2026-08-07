@@ -54,7 +54,7 @@ export default async function UtilizadoresPage() {
                   <td className="px-5 py-3 text-gray-600">{user.email}</td>
                   <td className="px-5 py-3">
                     <Badge
-                      color={user.role === "ADMIN" ? "#E4002B" : undefined}
+                      color={user.role === "ADMIN" ? "#070F26" : undefined}
                     >
                       {user.role === "ADMIN" ? "Administrador" : "Utilizador"}
                     </Badge>
@@ -75,7 +75,7 @@ export default async function UtilizadoresPage() {
                     <div className="flex justify-end gap-3">
                       <Link
                         href={`/admin/utilizadores/${user.id}/editar`}
-                        className="text-sm font-medium text-navy hover:text-ntt-red"
+                        className="text-sm font-medium text-navy hover:text-blue"
                       >
                         Editar
                       </Link>

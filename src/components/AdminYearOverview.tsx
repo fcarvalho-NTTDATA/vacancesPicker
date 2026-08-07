@@ -40,7 +40,7 @@ export function AdminYearOverview({ people }: { people: Person[] }) {
                 <td className="px-5 py-3">
                   <Link
                     href={`/admin/utilizadores/${person.id}/editar`}
-                    className="font-medium text-navy hover:text-ntt-red"
+                    className="font-medium text-navy hover:text-blue"
                   >
                     {person.name}
                   </Link>

@@ -99,7 +99,7 @@ export function UserForm({
                   name="projectIds"
                   value={project.id}
                   defaultChecked={initial?.projectIds.includes(project.id)}
-                  className="accent-ntt-red"
+                  className="accent-navy"
                 />
                 {project.name}
               </label>

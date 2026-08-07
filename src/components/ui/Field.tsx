@@ -10,7 +10,7 @@ export function Label(props: LabelHTMLAttributes<HTMLLabelElement>) {
 }
 
 const fieldClass =
-  "w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm text-navy shadow-sm outline-none focus:border-ntt-red focus:ring-1 focus:ring-ntt-red";
+  "w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm text-navy shadow-sm outline-none focus:border-navy focus:ring-1 focus:ring-navy";
 
 export function Input(props: InputHTMLAttributes<HTMLInputElement>) {
   return <input className={fieldClass} {...props} />;

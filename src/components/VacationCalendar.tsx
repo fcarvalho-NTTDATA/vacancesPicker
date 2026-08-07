@@ -46,7 +46,7 @@ function MonthGrid({
               key={i}
               className={`flex h-6 w-6 items-center justify-center rounded-full text-[11px] ${
                 onVacation
-                  ? "bg-ntt-red font-semibold text-white"
+                  ? "bg-blue font-semibold text-white"
                   : isWeekend
                   ? "text-gray-300"
                   : "text-navy"
