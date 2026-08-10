@@ -56,14 +56,14 @@ export function AdminYearOverview({ people }: { people: Person[] }) {
                   <p className="text-xs text-gray-500">
                     {usedDays}/{person.annualVacationDays} dias usados
                     {remaining < 0 && (
-                      <span className="ml-1 font-semibold text-ntt-red">
+                      <span className="ml-1 font-semibold text-danger">
                         (excede {Math.abs(remaining)})
                       </span>
                     )}
                   </p>
                   <div className="mt-1 h-1.5 w-full max-w-[140px] overflow-hidden rounded-full bg-navy-50">
                     <div
-                      className={`h-full rounded-full ${remaining < 0 ? "bg-ntt-red" : "bg-navy"}`}
+                      className={`h-full rounded-full ${remaining < 0 ? "bg-danger" : "bg-navy"}`}
                       style={{ width: `${pct}%` }}
                     />
                   </div>

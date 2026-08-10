@@ -87,7 +87,7 @@ export default async function FeriasPage({
               </p>
               <p
                 className={`mt-1 text-2xl font-bold ${
-                  remaining < 0 ? "text-ntt-red" : "text-navy"
+                  remaining < 0 ? "text-danger" : "text-navy"
                 }`}
               >
                 {remaining}
@@ -97,7 +97,7 @@ export default async function FeriasPage({
           <div className="mt-4 h-2 overflow-hidden rounded-full bg-navy-50">
             <div
               className={`h-full rounded-full ${
-                remaining < 0 ? "bg-ntt-red" : "bg-navy"
+                remaining < 0 ? "bg-danger" : "bg-navy"
               }`}
               style={{
                 width: `${Math.min(100, (usedDays / Math.max(user.annualVacationDays, 1)) * 100)}%`,

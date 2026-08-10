@@ -93,7 +93,7 @@ export function VacationForm({
       </div>
 
       {preview?.kind === "error" && (
-        <p className="rounded-md bg-ntt-red-light px-3 py-2 text-sm text-ntt-red-dark">
+        <p className="rounded-md bg-danger-light px-3 py-2 text-sm text-danger-dark">
           {preview.message}
         </p>
       )}
@@ -102,7 +102,7 @@ export function VacationForm({
         <p
           className={`rounded-md px-3 py-2 text-sm ${
             preview.remainingAfter < 0
-              ? "bg-ntt-red-light text-ntt-red-dark"
+              ? "bg-danger-light text-danger-dark"
               : "bg-navy-50 text-navy"
           }`}
         >
@@ -115,7 +115,7 @@ export function VacationForm({
       )}
 
       {state?.message && (
-        <p className="rounded-md bg-ntt-red-light px-3 py-2 text-sm text-ntt-red-dark">
+        <p className="rounded-md bg-danger-light px-3 py-2 text-sm text-danger-dark">
           {state.message}
         </p>
       )}

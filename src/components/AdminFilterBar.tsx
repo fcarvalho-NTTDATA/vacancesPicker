@@ -45,7 +45,7 @@ export function AdminFilterBar({
           <button
             type="button"
             onClick={() => updateParam("vista", "mes")}
-            className={`rounded px-3 py-1.5 text-sm font-medium transition-colors ${
+            className={`cursor-pointer rounded px-3 py-1.5 text-sm font-medium transition-colors ${
               view === "mes" ? "bg-navy text-white" : "text-navy hover:bg-navy-50"
             }`}
           >
@@ -54,7 +54,7 @@ export function AdminFilterBar({
           <button
             type="button"
             onClick={() => updateParam("vista", "ano")}
-            className={`rounded px-3 py-1.5 text-sm font-medium transition-colors ${
+            className={`cursor-pointer rounded px-3 py-1.5 text-sm font-medium transition-colors ${
               view === "ano" ? "bg-navy text-white" : "text-navy hover:bg-navy-50"
             }`}
           >

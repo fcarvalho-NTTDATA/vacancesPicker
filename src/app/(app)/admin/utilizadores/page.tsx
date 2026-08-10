@@ -72,7 +72,7 @@ export default async function UtilizadoresPage() {
                     </div>
                   </td>
                   <td className="px-5 py-3 text-right">
-                    <div className="flex justify-end gap-3">
+                    <div className="flex items-center justify-end gap-3">
                       <Link
                         href={`/admin/utilizadores/${user.id}/editar`}
                         className="text-sm font-medium text-navy hover:text-blue"

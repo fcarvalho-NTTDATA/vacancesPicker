@@ -41,7 +41,7 @@ export function ProjectForm({
       </div>
 
       {errorMessage && (
-        <p className="rounded-md bg-ntt-red-light px-3 py-2 text-sm text-ntt-red-dark">
+        <p className="rounded-md bg-danger-light px-3 py-2 text-sm text-danger-dark">
           {errorMessage}
         </p>
       )}

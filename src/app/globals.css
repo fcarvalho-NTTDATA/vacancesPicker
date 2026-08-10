@@ -10,10 +10,9 @@
   --color-foreground: var(--foreground);
   --font-sans: var(--font-inter);
 
-  /* Cores alinhadas com pt.nttdata.com: navy é a cor primária (header,
-     botões), azul é o accent secundário/destaque, vermelho fica
-     reservado a estados de erro/aviso (é --bs-warning e --bs-danger
-     no tema deles, não a cor de marca principal). */
+  /* navy é a cor primária (header, botões), azul é o accent
+     secundário/destaque, vermelho fica reservado a estados de
+     erro/aviso. */
   --color-navy: #070f26;
   --color-navy-dark: #04070f;
   --color-navy-50: #f6f8fd;
@@ -22,9 +21,9 @@
   --color-blue-dark: #005b94;
   --color-blue-light: #e6f2fb;
 
-  --color-ntt-red: #cd1517;
-  --color-ntt-red-dark: #ae1214;
-  --color-ntt-red-light: #fbeaea;
+  --color-danger: #cd1517;
+  --color-danger-dark: #ae1214;
+  --color-danger-light: #fbeaea;
 }
 
 body {

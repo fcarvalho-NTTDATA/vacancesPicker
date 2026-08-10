@@ -45,12 +45,17 @@ function MonthGrid({
           const weekday = date.getUTCDay();
           const isWeekend = weekday === 0 || weekday === 6;
           const onLeave = peopleOnDate(date, people);
+          const count = onLeave.length;
 
           return (
             <div key={i} className="group relative flex h-7 w-7 items-center justify-center">
               <span
                 className={`flex h-6 w-6 items-center justify-center rounded-full text-[11px] ${
-                  onLeave.length > 0
+                  count >= 3
+                    ? "bg-blue font-semibold text-white"
+                    : count === 2
+                    ? "bg-blue/60 font-semibold text-navy"
+                    : count === 1
                     ? "bg-blue-light font-semibold text-blue-dark"
                     : isWeekend
                     ? "text-gray-300"
@@ -59,12 +64,22 @@ function MonthGrid({
               >
                 {day}
               </span>
-              {onLeave.length > 0 && (
+              {count > 0 && (
                 <>
-                  <span className="absolute bottom-0.5 h-1.5 w-1.5 rounded-full bg-blue" />
+                  {count >= 3 ? (
+                    <span className="absolute bottom-0.5 flex h-3 min-w-[0.75rem] items-center justify-center rounded-full bg-navy px-0.5 text-[8px] font-bold leading-none text-white">
+                      {count}
+                    </span>
+                  ) : (
+                    <span className="absolute bottom-0.5 flex gap-0.5">
+                      {Array.from({ length: count }).map((_, dot) => (
+                        <span key={dot} className="h-1.5 w-1.5 rounded-full bg-blue" />
+                      ))}
+                    </span>
+                  )}
                   <div className="pointer-events-none absolute bottom-full left-1/2 z-20 mb-1.5 hidden w-max max-w-[200px] -translate-x-1/2 rounded-md bg-navy px-2.5 py-1.5 text-xs text-white shadow-lg group-hover:block">
                     <p className="font-semibold">
-                      {onLeave.length === 1 ? "1 pessoa de férias" : `${onLeave.length} pessoas de férias`}
+                      {count === 1 ? "1 pessoa de férias" : `${count} pessoas de férias`}
                     </p>
                     <p className="text-white/80">{onLeave.map((p) => p.name).join(", ")}</p>
                   </div>
