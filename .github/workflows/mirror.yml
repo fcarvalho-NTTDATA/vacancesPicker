@@ -1,0 +1,26 @@
+name: Mirror para fredrelv/vacancesPickerScheduler
+
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+  mirror:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          ref: master
+
+      - name: Push master para o repositório espelho
+        env:
+          MIRROR_TOKEN: ${{ secrets.MIRROR_TOKEN }}
+        run: |
+          if [ -z "$MIRROR_TOKEN" ]; then
+            echo "Falta configurar o secret MIRROR_TOKEN (Settings > Secrets and variables > Actions) com um token de acesso à conta fredrelv com permissão de escrita em vacancesPickerScheduler." >&2
+            exit 1
+          fi
+          git push "https://x-access-token:${MIRROR_TOKEN}@github.com/fredrelv/vacancesPickerScheduler.git" HEAD:master --force
