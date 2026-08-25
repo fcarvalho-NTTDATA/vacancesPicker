@@ -1,10 +1,16 @@
-import { MONTH_NAMES_PT, WEEKDAY_LABELS_PT } from "@/lib/vacation";
+import {
+  ABSENCE_TYPE_COLORS,
+  ABSENCE_TYPE_LABELS_PT,
+  AbsenceType,
+  MONTH_NAMES_PT,
+  WEEKDAY_LABELS_PT,
+} from "@/lib/vacation";
 
-type Range = { startDate: Date; endDate: Date };
+type Range = { startDate: Date; endDate: Date; type: AbsenceType };
 
-function isWithinRanges(date: Date, ranges: Range[]) {
+function rangeOnDate(date: Date, ranges: Range[]) {
   const time = date.getTime();
-  return ranges.some((r) => time >= r.startDate.getTime() && time <= r.endDate.getTime());
+  return ranges.find((r) => time >= r.startDate.getTime() && time <= r.endDate.getTime());
 }
 
 function MonthGrid({
@@ -40,17 +46,18 @@ function MonthGrid({
           const date = new Date(Date.UTC(year, month, day));
           const weekday = date.getUTCDay();
           const isWeekend = weekday === 0 || weekday === 6;
-          const onVacation = isWithinRanges(date, ranges);
+          const range = rangeOnDate(date, ranges);
           return (
             <span
               key={i}
               className={`flex h-6 w-6 items-center justify-center rounded-full text-[11px] ${
-                onVacation
-                  ? "bg-blue font-semibold text-white"
+                range
+                  ? "font-semibold text-white"
                   : isWeekend
                   ? "text-gray-300"
                   : "text-navy"
               }`}
+              style={range ? { backgroundColor: ABSENCE_TYPE_COLORS[range.type] } : undefined}
             >
               {day}
             </span>
@@ -69,10 +76,25 @@ export function VacationCalendar({
   ranges: Range[];
 }) {
   return (
-    <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4">
-      {MONTH_NAMES_PT.map((_, month) => (
-        <MonthGrid key={month} year={year} month={month} ranges={ranges} />
-      ))}
+    <div className="space-y-3">
+      <div className="flex flex-wrap items-center gap-3">
+        {(Object.entries(ABSENCE_TYPE_LABELS_PT) as [AbsenceType, string][]).map(
+          ([type, label]) => (
+            <span key={type} className="flex items-center gap-1.5 text-xs text-gray-500">
+              <span
+                className="h-2.5 w-2.5 rounded-full"
+                style={{ backgroundColor: ABSENCE_TYPE_COLORS[type] }}
+              />
+              {label}
+            </span>
+          )
+        )}
+      </div>
+      <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4">
+        {MONTH_NAMES_PT.map((_, month) => (
+          <MonthGrid key={month} year={year} month={month} ranges={ranges} />
+        ))}
+      </div>
     </div>
   );
 }

@@ -13,6 +13,12 @@ enum Role {
   USER
 }
 
+enum AbsenceType {
+  FERIAS
+  DOENCA
+  COMPENSADO
+}
+
 model User {
   id                 String             @id @default(cuid())
   name               String
@@ -45,13 +51,14 @@ model ProjectAssignment {
 }
 
 model VacationEntry {
-  id        String   @id @default(cuid())
+  id        String      @id @default(cuid())
   userId    String
-  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  startDate DateTime @db.Date
-  endDate   DateTime @db.Date
+  user      User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  type      AbsenceType @default(FERIAS)
+  startDate DateTime    @db.Date
+  endDate   DateTime    @db.Date
   daysCount Int
-  createdAt DateTime @default(now())
+  createdAt DateTime    @default(now())
 
   @@index([userId])
 }

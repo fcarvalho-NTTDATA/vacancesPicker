@@ -13,6 +13,7 @@ export type VacationFormState = {
 
 const entrySchema = z
   .object({
+    type: z.enum(["FERIAS", "DOENCA", "COMPENSADO"]),
     startDate: z.string().min(1, "Indica a data de início"),
     endDate: z.string().min(1, "Indica a data de fim"),
   })
@@ -28,6 +29,7 @@ export async function createVacationEntry(
   const session = await requireSession();
 
   const parsed = entrySchema.safeParse({
+    type: formData.get("type"),
     startDate: formData.get("startDate"),
     endDate: formData.get("endDate"),
   });
@@ -53,12 +55,13 @@ export async function createVacationEntry(
   });
 
   if (overlapping) {
-    return { ok: false, message: "Este período sobrepõe-se a férias já registadas" };
+    return { ok: false, message: "Este período sobrepõe-se a um período já registado" };
   }
 
   await prisma.vacationEntry.create({
     data: {
       userId: session.user.id,
+      type: parsed.data.type,
       startDate,
       endDate,
       daysCount,

@@ -1,16 +1,19 @@
-import { MONTH_NAMES_PT, WEEKDAY_LABELS_PT } from "@/lib/vacation";
+import { ABSENCE_TYPE_LABELS_PT, AbsenceType, MONTH_NAMES_PT, WEEKDAY_LABELS_PT } from "@/lib/vacation";
 
 type Person = {
   id: string;
   name: string;
-  entries: { startDate: Date; endDate: Date }[];
+  entries: { startDate: Date; endDate: Date; type: AbsenceType }[];
 };
 
 function peopleOnDate(date: Date, people: Person[]) {
   const time = date.getTime();
-  return people.filter((p) =>
-    p.entries.some((e) => time >= e.startDate.getTime() && time <= e.endDate.getTime())
-  );
+  return people.flatMap((p) => {
+    const entry = p.entries.find(
+      (e) => time >= e.startDate.getTime() && time <= e.endDate.getTime()
+    );
+    return entry ? [{ name: p.name, type: entry.type }] : [];
+  });
 }
 
 function MonthGrid({
@@ -81,7 +84,11 @@ function MonthGrid({
                     <p className="font-semibold">
                       {count === 1 ? "1 pessoa de férias" : `${count} pessoas de férias`}
                     </p>
-                    <p className="text-white/80">{onLeave.map((p) => p.name).join(", ")}</p>
+                    <p className="text-white/80">
+                      {onLeave
+                        .map((p) => `${p.name} (${ABSENCE_TYPE_LABELS_PT[p.type]})`)
+                        .join(", ")}
+                    </p>
                   </div>
                 </>
               )}

@@ -5,6 +5,7 @@ import { AdminFilterBar } from "@/components/AdminFilterBar";
 import { AdminVacationGrid } from "@/components/AdminVacationGrid";
 import { AdminYearOverview } from "@/components/AdminYearOverview";
 import { AdminTeamCalendar } from "@/components/AdminTeamCalendar";
+import { AbsenceType } from "@/lib/vacation";
 
 export default async function AdminPage({
   searchParams,
@@ -59,6 +60,7 @@ export default async function AdminPage({
       startDate: e.startDate,
       endDate: e.endDate,
       daysCount: e.daysCount,
+      type: e.type as AbsenceType,
     })),
   }));
 

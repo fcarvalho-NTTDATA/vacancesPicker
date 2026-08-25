@@ -7,7 +7,14 @@ import { ConfirmSubmitButton } from "@/components/ui/ConfirmSubmitButton";
 import { VacationForm } from "@/components/VacationForm";
 import { VacationCalendar } from "@/components/VacationCalendar";
 import { deleteVacationEntry } from "./actions";
-import { formatDateDisplay, formatDateISO } from "@/lib/vacation";
+import {
+  ABSENCE_TYPE_COLORS,
+  ABSENCE_TYPE_LABELS_PT,
+  AbsenceType,
+  countsTowardVacationBalance,
+  formatDateDisplay,
+  formatDateISO,
+} from "@/lib/vacation";
 
 export default async function FeriasPage({
   searchParams,
@@ -33,7 +40,9 @@ export default async function FeriasPage({
     }),
   ]);
 
-  const usedDays = entries.reduce((sum, e) => sum + e.daysCount, 0);
+  const usedDays = entries
+    .filter((e) => countsTowardVacationBalance(e.type as AbsenceType))
+    .reduce((sum, e) => sum + e.daysCount, 0);
   const remaining = user.annualVacationDays - usedDays;
 
   const years = [year - 1, year, year + 1];
@@ -42,9 +51,9 @@ export default async function FeriasPage({
     <div className="space-y-6">
       <div className="flex flex-wrap items-center justify-between gap-4">
         <div>
-          <h1 className="text-xl font-semibold text-navy">As minhas férias</h1>
+          <h1 className="text-xl font-semibold text-navy">As minhas férias e ausências</h1>
           <p className="text-sm text-gray-500">
-            Regista os teus períodos de férias para {year}.
+            Regista os teus períodos de férias, doença e compensação para {year}.
           </p>
         </div>
         <div className="flex gap-2">
@@ -120,7 +129,7 @@ export default async function FeriasPage({
 
       <Card>
         <CardHeader>
-          <CardTitle>Adicionar período de férias</CardTitle>
+          <CardTitle>Adicionar período de ausência</CardTitle>
         </CardHeader>
         <CardBody>
           <VacationForm
@@ -140,7 +149,7 @@ export default async function FeriasPage({
         <CardBody>
           {entries.length === 0 ? (
             <p className="text-sm text-gray-500">
-              Ainda não registaste férias para este ano.
+              Ainda não registaste ausências para este ano.
             </p>
           ) : (
             <ul className="divide-y divide-gray-100">
@@ -150,13 +159,20 @@ export default async function FeriasPage({
                   className="flex items-center justify-between py-3"
                 >
                   <div>
-                    <p className="text-sm font-medium text-navy">
-                      {formatDateDisplay(entry.startDate)} — {formatDateDisplay(entry.endDate)}
-                    </p>
+                    <div className="flex items-center gap-2">
+                      <p className="text-sm font-medium text-navy">
+                        {formatDateDisplay(entry.startDate)} — {formatDateDisplay(entry.endDate)}
+                      </p>
+                      <Badge color={ABSENCE_TYPE_COLORS[entry.type as AbsenceType]}>
+                        {ABSENCE_TYPE_LABELS_PT[entry.type as AbsenceType]}
+                      </Badge>
+                    </div>
                     <p className="text-xs text-gray-500">
                       {entry.daysCount === 1
                         ? "1 dia útil"
                         : `${entry.daysCount} dias úteis`}
+                      {!countsTowardVacationBalance(entry.type as AbsenceType) &&
+                        " · não conta para o saldo de férias"}
                     </p>
                   </div>
                   <form action={deleteVacationEntry}>
@@ -186,6 +202,7 @@ export default async function FeriasPage({
             ranges={entries.map((e) => ({
               startDate: e.startDate,
               endDate: e.endDate,
+              type: e.type as AbsenceType,
             }))}
           />
         </CardBody>
