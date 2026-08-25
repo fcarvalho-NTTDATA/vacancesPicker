@@ -3,14 +3,21 @@
 import { useActionState, useMemo, useState } from "react";
 import { createVacationEntry } from "@/app/(app)/ferias/actions";
 import { Button } from "@/components/ui/Button";
-import { FormField, Input } from "@/components/ui/Field";
-import { countBusinessDays, rangesOverlap, toDateOnlyUTC } from "@/lib/vacation";
+import { FormField, Input, Select } from "@/components/ui/Field";
+import {
+  ABSENCE_TYPE_LABELS_PT,
+  AbsenceType,
+  countBusinessDays,
+  countsTowardVacationBalance,
+  rangesOverlap,
+  toDateOnlyUTC,
+} from "@/lib/vacation";
 
 type ExistingRange = { startDate: string; endDate: string };
 
 type Preview =
   | { kind: "error"; message: string }
-  | { kind: "info"; daysCount: number; remainingAfter: number };
+  | { kind: "info"; daysCount: number; countsTowardBalance: boolean; remainingAfter: number };
 
 export function VacationForm({
   existingRanges,
@@ -23,6 +30,7 @@ export function VacationForm({
     createVacationEntry,
     undefined
   );
+  const [type, setType] = useState<AbsenceType>("FERIAS");
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
 
@@ -59,14 +67,36 @@ export function VacationForm({
       return { kind: "error", message: "Sobrepõe-se a um período já registado" };
     }
 
-    return { kind: "info", daysCount, remainingAfter: remainingDays - daysCount };
-  }, [startDate, endDate, existingRanges, remainingDays]);
+    const countsTowardBalance = countsTowardVacationBalance(type);
+    return {
+      kind: "info",
+      daysCount,
+      countsTowardBalance,
+      remainingAfter: countsTowardBalance ? remainingDays - daysCount : remainingDays,
+    };
+  }, [type, startDate, endDate, existingRanges, remainingDays]);
 
   const blocked = preview?.kind === "error";
 
   return (
     <form action={formAction} className="space-y-4">
-      <div className="grid gap-4 sm:grid-cols-3 sm:items-end">
+      <div className="grid gap-4 sm:grid-cols-4 sm:items-end">
+        <FormField label="Tipo" htmlFor="type">
+          <Select
+            id="type"
+            name="type"
+            value={type}
+            onChange={(e) => setType(e.target.value as AbsenceType)}
+          >
+            {(Object.entries(ABSENCE_TYPE_LABELS_PT) as [AbsenceType, string][]).map(
+              ([value, label]) => (
+                <option key={value} value={value}>
+                  {label}
+                </option>
+              )
+            )}
+          </Select>
+        </FormField>
         <FormField label="Início" htmlFor="startDate">
           <Input
             id="startDate"
@@ -108,9 +138,11 @@ export function VacationForm({
         >
           {preview.daysCount === 1 ? "1 dia útil" : `${preview.daysCount} dias úteis`}
           {" · "}
-          {preview.remainingAfter < 0
-            ? `Excede o saldo em ${Math.abs(preview.remainingAfter)} dia${Math.abs(preview.remainingAfter) > 1 ? "s" : ""}`
-            : `Ficam ${preview.remainingAfter} dias restantes`}
+          {preview.countsTowardBalance
+            ? preview.remainingAfter < 0
+              ? `Excede o saldo em ${Math.abs(preview.remainingAfter)} dia${Math.abs(preview.remainingAfter) > 1 ? "s" : ""}`
+              : `Ficam ${preview.remainingAfter} dias restantes`
+            : "Não conta para o saldo de férias, mas conta como dia não trabalhado"}
         </p>
       )}
 

@@ -63,6 +63,26 @@ export function rangesOverlap(
   return aStart.getTime() <= bEnd.getTime() && bStart.getTime() <= aEnd.getTime();
 }
 
+export type AbsenceType = "FERIAS" | "DOENCA" | "COMPENSADO";
+
+export const ABSENCE_TYPE_LABELS_PT: Record<AbsenceType, string> = {
+  FERIAS: "Férias",
+  DOENCA: "Doença",
+  COMPENSADO: "Compensação",
+};
+
+export const ABSENCE_TYPE_COLORS: Record<AbsenceType, string> = {
+  FERIAS: "#0072bc",
+  DOENCA: "#cd7a15",
+  COMPENSADO: "#6b4fbb",
+};
+
+// Todas as ausências contam sempre como dias não trabalhados; só as férias
+// consomem o saldo anual de dias de férias da pessoa.
+export function countsTowardVacationBalance(type: AbsenceType): boolean {
+  return type === "FERIAS";
+}
+
 export const MONTH_NAMES_PT = [
   "Janeiro",
   "Fevereiro",

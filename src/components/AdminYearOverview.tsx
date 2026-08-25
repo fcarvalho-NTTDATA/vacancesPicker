@@ -1,13 +1,20 @@
 import Link from "next/link";
 import { Badge } from "@/components/ui/Badge";
-import { daysToHours, formatDateDisplay } from "@/lib/vacation";
+import {
+  ABSENCE_TYPE_COLORS,
+  ABSENCE_TYPE_LABELS_PT,
+  AbsenceType,
+  countsTowardVacationBalance,
+  daysToHours,
+  formatDateDisplay,
+} from "@/lib/vacation";
 
 type Person = {
   id: string;
   name: string;
   annualVacationDays: number;
   projects: { id: string; name: string; color: string }[];
-  entries: { startDate: Date; endDate: Date; daysCount: number }[];
+  entries: { startDate: Date; endDate: Date; daysCount: number; type: AbsenceType }[];
 };
 
 export function AdminYearOverview({ people }: { people: Person[] }) {
@@ -31,7 +38,9 @@ export function AdminYearOverview({ people }: { people: Person[] }) {
         </thead>
         <tbody>
           {people.map((person) => {
-            const usedDays = person.entries.reduce((sum, e) => sum + e.daysCount, 0);
+            const usedDays = person.entries
+              .filter((e) => countsTowardVacationBalance(e.type))
+              .reduce((sum, e) => sum + e.daysCount, 0);
             const remaining = person.annualVacationDays - usedDays;
             const pct = Math.min(100, (usedDays / Math.max(person.annualVacationDays, 1)) * 100);
 
@@ -69,14 +78,24 @@ export function AdminYearOverview({ people }: { people: Person[] }) {
                   </div>
                 </td>
                 <td className="px-5 py-3 text-xs text-gray-500">
-                  {person.entries.length === 0
-                    ? "—"
-                    : person.entries
-                        .map(
-                          (e) =>
-                            `${formatDateDisplay(e.startDate)} – ${formatDateDisplay(e.endDate)} (${daysToHours(e.daysCount)}h)`
-                        )
-                        .join(" · ")}
+                  {person.entries.length === 0 ? (
+                    "—"
+                  ) : (
+                    <div className="flex flex-wrap gap-x-1.5 gap-y-1">
+                      {person.entries.map((e, i) => (
+                        <span key={i} className="whitespace-nowrap">
+                          <span
+                            className="mr-1 inline-block h-1.5 w-1.5 rounded-full align-middle"
+                            style={{ backgroundColor: ABSENCE_TYPE_COLORS[e.type] }}
+                            title={ABSENCE_TYPE_LABELS_PT[e.type]}
+                          />
+                          {formatDateDisplay(e.startDate)} – {formatDateDisplay(e.endDate)} (
+                          {daysToHours(e.daysCount)}h)
+                          {i < person.entries.length - 1 ? " ·" : ""}
+                        </span>
+                      ))}
+                    </div>
+                  )}
                 </td>
               </tr>
             );

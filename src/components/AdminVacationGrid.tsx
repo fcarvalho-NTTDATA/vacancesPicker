@@ -1,17 +1,23 @@
 import Link from "next/link";
 import { Badge } from "@/components/ui/Badge";
-import { businessDaysWithinBounds, daysToHours } from "@/lib/vacation";
+import {
+  ABSENCE_TYPE_COLORS,
+  ABSENCE_TYPE_LABELS_PT,
+  AbsenceType,
+  businessDaysWithinBounds,
+  daysToHours,
+} from "@/lib/vacation";
 
 type Person = {
   id: string;
   name: string;
   projects: { id: string; name: string; color: string }[];
-  ranges: { startDate: Date; endDate: Date }[];
+  ranges: { startDate: Date; endDate: Date; type: AbsenceType }[];
 };
 
-function isOnVacation(date: Date, ranges: Person["ranges"]) {
+function rangeOnDate(date: Date, ranges: Person["ranges"]) {
   const time = date.getTime();
-  return ranges.some(
+  return ranges.find(
     (r) => time >= r.startDate.getTime() && time <= r.endDate.getTime()
   );
 }
@@ -97,18 +103,19 @@ export function AdminVacationGrid({
                 const date = new Date(Date.UTC(year, month, day));
                 const weekday = date.getUTCDay();
                 const isWeekend = weekday === 0 || weekday === 6;
-                const onVacation = isOnVacation(date, person.ranges);
+                const range = rangeOnDate(date, person.ranges);
                 return (
                   <td key={day} className="p-0.5 text-center align-middle">
                     <div
                       className={`mx-auto h-6 w-6 rounded ${
-                        onVacation
-                          ? "bg-blue"
-                          : isWeekend
-                          ? "bg-gray-100"
-                          : ""
+                        !range && isWeekend ? "bg-gray-100" : ""
                       }`}
-                      title={onVacation ? "Férias" : undefined}
+                      style={
+                        range
+                          ? { backgroundColor: ABSENCE_TYPE_COLORS[range.type] }
+                          : undefined
+                      }
+                      title={range ? ABSENCE_TYPE_LABELS_PT[range.type] : undefined}
                     />
                   </td>
                 );
